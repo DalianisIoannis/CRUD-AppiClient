@@ -1,93 +1,143 @@
 import json
 import requests
 import urllib3
-from classMovieDB import MovieDB
 
-urllib3.disable_warnings()
+class MovieDB():
+    def __init__(self, BaseURL, username, password, proxie1s):
+        self.BaseURL = BaseURL
+        self.proxie1s = proxie1s
+        self.data = "username="+username+"&password="+password
+        temp1 = ((requests.post(BaseURL+"api/api-token-auth/", data=self.data, verify=False , proxies=self.proxie1s, headers={'Content-Type': "application/x-www-form-urlencoded"})).text)
+        temp2 = json.loads(temp1)
+        self.myToken = "Token" + " " + temp2['token']
+        self.headers = {}
+        # self.headers['Content-Type'] = "application/json" #unecessary if in requests i have json=data
+        self.headers['Authorization'] = self.myToken
+        print(self.headers)
+    
+    def AppiClient(self, request_type, url, data=None):
+        try:
+            response = requests.request(request_type, url, json=data, verify=False, proxies=self.proxie1s, headers=self.headers)
+            return(response)
+        except:
+            print("Request can't be made.")
+            return None
 
-proxie1s = {"https":"http://idalianis:idalianis@192.168.30.3:3128"}
-db = MovieDB('https://34.240.190.150/', 'TestUser', 'ZfuzpbZ8Mo4' , proxie1s)
-db.get_all()
+    def print_whole_category(self, table):
+        URL = self.BaseURL + 'api/' + table
+        string_print = ((self.AppiClient("GET", URL)).text).replace('},','\n')
+        string_print = string_print.replace('\n' , '}\n')
+        string_print = string_print.replace('[' , '')
+        string_print = string_print.replace(']' , '')
+        print(string_print)
 
-action = input("Choose action: GET, POST, PUT, DELETE, PATCH or END to Exit.\n")
-while action != "END":
-    to_whom = input("Choose: ACTOR, DIRECTOR, MOVIE\n")
-    if action == "GET":
-        id_get = input("Which to return?\n")
-        if to_whom == "ACTOR":
-            db.get_actor(id_get)
-        elif to_whom == "DIRECTOR":
-            db.get_director(id_get)
+    def get_all(self):
+        print("Directors:")
+        self.print_whole_category('directors')
+        print("Actors:")
+        self.print_whole_category('actors')
+        print("Movies:")
+        self.print_whole_category('movies')
+
+    def get_director(self, id):
+        URL = self.BaseURL + 'api/directors/' + str(id)
+        print((self.AppiClient("GET", URL)).text)
+    
+    def get_actor(self, id):
+        URL = self.BaseURL + 'api/actors/' + str(id)
+        print((self.AppiClient("GET", URL)).text)
+    
+    def get_movie(self, id):
+        URL = self.BaseURL + 'api/movies/' + str(id)
+        print((self.AppiClient("GET", URL)).text)
+
+    def post_director(self, name_give, birthday_give):
+        payload = {'name' : name_give , 'birthday' : birthday_give}
+        URL = self.BaseURL + '/api/directors/'
+        print((self.AppiClient("POST", URL, payload)).text)
+
+    def post_actor(self, name_give, birthday_give):
+        payload = {'name' : name_give , 'birthday' : birthday_give}
+        URL = self.BaseURL + '/api/actors/'
+        print((self.AppiClient("POST", URL, payload)).text)
+
+    def post_movie(self, name_give, year, dir_id, act_list=None):
+        if self.director_exist(dir_id)==True:
+            flag=True
+            for i in act_list:
+                if self.actor_exist(i)==False:
+                    print("Such actor doesn't exist.\n")
+                    flag=False
+                    break
+            if flag==True:
+                payload = {'name' : name_give, 'year' : year, 'director' : dir_id, 'actors' : act_list}
+                URL = self.BaseURL + '/api/movies/'
+                print((self.AppiClient("POST", URL, payload)).text)
         else:
-            db.get_movie(id_get)
-    elif action == "POST":
-        if to_whom == "ACTOR":
-            name_give = input("Give name.\n")
-            birthday_give = input("Give birthday.\n")
-            db.post_actor(name_give, birthday_give)
-        elif to_whom == "DIRECTOR":
-            name_give = input("Give name.\n")
-            birthday_give = input("Give birthday.\n")
-            db.post_director(name_give, birthday_give)
+            print("Such director doesn't exist.\n")
+
+    def delete_director(self, id):
+        URL = self.BaseURL + '/api/directors/' + str(id)
+        print((self.AppiClient("DELETE", URL)).text)
+
+    def delete_actor(self, id):
+        URL = self.BaseURL + '/api/actors/' + str(id)
+        print((self.AppiClient("DELETE", URL)).text)
+
+    def delete_movie(self, id):
+        URL = self.BaseURL + '/api/movies/' + str(id)
+        print((self.AppiClient("DELETE", URL)).text)
+
+    def director_exist(self, idtk):
+        req = self.AppiClient("GET", self.BaseURL + 'api/directors/' + str(idtk))
+        if (req).status_code==200:
+            return True
         else:
-            name_give = input("Give name.\n")
-            year_give = input("Give year.\n")
-            dir_give = input("Give director id.\n")
-            actor_list = list()
-            flag = False
-            while flag == False:
-                actor_id = input('Actor of the new movie?(for exitting press OK.)\n')
-                if actor_id == "OK":
-                    flag=True
-                else:
-                    actor_list.append(actor_id)
-            db.post_movie(name_give, year_give, dir_give, actor_list)
-        db.get_all()
-    elif action == "PUT":
-        id_get = input("Which to update?\n")
-        if to_whom == "ACTOR":
-            name_give = input("Give new name.\n")
-            birthday_give = input("Give new birthday.\n")
-            db.put_actor(id_get, name_give, birthday_give)
-        elif to_whom == "DIRECTOR":
-            name_give = input("Give new name.\n")
-            birthday_give = input("Give new birthday.\n")
-            db.put_director(id_get, name_give, birthday_give)
+            return False
+
+    def actor_exist(self, idtk):
+        req = self.AppiClient("GET", self.BaseURL + 'api/actors/' + str(idtk))
+        if (req).status_code==200:
+            return True
         else:
-            name_give = input("Give new name.\n")
-            year_give = input("Give new year.\n")
-            dir_give = input("Give new director id.\n")
-            actor_list = list()
-            flag = False
-            while flag == False:
-                actor_id = input('Actor of the movie?(for exitting press OK.)\n')
-                if actor_id == "OK":
-                    flag=True
-                else:
-                    actor_list.append(actor_id)
-            db.put_movie(id_get, name_give, year_give, dir_give, actor_list)
-        db.get_all()
-    elif action == "PATCH":
-        id_get = input("Which to update?\n")
-        if to_whom == "ACTOR":
-            name_give = input("Give new name.\n")
-            db.patch_actor(id_get, name_give)
-        elif to_whom == "DIRECTOR":
-            name_give = input("Give new name.\n")
-            db.patch_director(id_get, name_give)
+            return False
+
+    def put_director(self , idtk , name_give , birthday_give):
+        payload = {"name" : name_give , "birthday" : birthday_give}
+        URL = self.BaseURL + '/api/directors/' + str(idtk) + '/'
+        print((self.AppiClient("PUT", URL , payload)).text)
+
+    def put_actor(self , idtk , name_give , birthday_give):
+        payload = {"name" : name_give , "birthday" : birthday_give}
+        URL = self.BaseURL + '/api/actors/' + str(idtk) + '/'
+        print((self.AppiClient("PUT", URL , payload)).text)
+    
+    def put_movie(self , idtk , name_give , year, dir_id, act_list):
+        if self.director_exist(dir_id)==True:
+            flag=True
+            for i in act_list:
+                if self.actor_exist(i)==False:
+                    print("Such actor doesn't exist.\n")
+                    flag=False
+                    break
+            if flag==True:
+                payload = {'name' : name_give, 'year' : year, 'director' : dir_id, 'actors' : act_list}
+                URL = self.BaseURL + '/api/movies/' + str(idtk) + '/'
+                print((self.AppiClient("PUT", URL , payload)).text)
         else:
-            name_give = input("Give new name.\n")
-            db.patch_movie(id_get, name_give)
-        db.get_all()
-    elif action == "DELETE":
-        id_get = input("Which to delete?\n")
-        if to_whom == "ACTOR":
-            db.delete_actor(id_get)
-        elif to_whom == "DIRECTOR":
-            db.delete_director(id_get)
-        else:
-            db.delete_movie(id_get)
-        db.get_all()
-    else:
-        print("Wrong action.\n")
-    action = input("Choose action: GET, POST, PUT, DELETE or END to Exit.\n")
+            print("Such director doesn't exist.\n")
+
+    def patch_director(self, idtk, name_give):
+        payload = {"name" : name_give}
+        URL = self.BaseURL + '/api/directors/' + str(idtk) + '/'
+        print((self.AppiClient("PATCH", URL , payload)).text)
+
+    def patch_actor(self, idtk, name_give):
+        payload = {"name" : name_give}
+        URL = self.BaseURL + '/api/actors/' + str(idtk) + '/'
+        print((self.AppiClient("PATCH", URL , payload)).text)
+
+    def patch_movie(self, idtk, name_give):
+        payload = {"name" : name_give}
+        URL = self.BaseURL + '/api/movies/' + str(idtk) + '/'
+        print((self.AppiClient("PATCH", URL , payload)).text)
