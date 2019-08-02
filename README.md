@@ -7,3 +7,7 @@ run_terminal and classMovieDB run on terminal
 
 run flask by executing run_flask.py in terminal
 then type urls in browser
+
+
+super important for python in git
+https://realpython.com/courses/python-git-github-intro/
