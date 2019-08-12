@@ -28,6 +28,11 @@ run_terminal.py
 ```
 ## Acknowledgments
 The README.md file was created based othe model: https://www.makeareadme.com/.
+
+## License
+[MIT]
+(https://choosealicense.com/licenses/mit/)
+
 ######################################################################
 ######################################################################
 run_terminal and classMovieDB run on terminal
