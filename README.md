@@ -30,8 +30,7 @@ run_terminal.py
 The README.md file was created based othe model: https://www.makeareadme.com/.
 
 ## License
-[MIT]
-(https://choosealicense.com/licenses/mit/)
+[MIT](https://choosealicense.com/licenses/mit/)
 
 ######################################################################
 ######################################################################
