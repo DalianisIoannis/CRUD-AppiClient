@@ -27,9 +27,3 @@ The README.md file was created based on the model: https://www.makeareadme.com/.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
-
-######################################################################
-######################################################################
-run_terminal and classMovieDB run on terminal
-run flask by executing run_flask.py in terminal
-then type urls in browser
