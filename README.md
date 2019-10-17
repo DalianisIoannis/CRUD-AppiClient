@@ -1,6 +1,6 @@
 # CRUD-AppiClient
 
-Let's suppose we have access to a movies database which is accessible through a REST API on a specific URL. The database holds the following data:
+We have access to a movies database which is accessible through a REST API on a specific URL. The database holds the following data:
 ```bash
 -Actors-
 o Name (string)
