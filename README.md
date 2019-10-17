@@ -26,6 +26,10 @@ DataBase credentials are not provided.
 ```bash
 run_terminal.py
 ```
+or
+```bash
+run_flask.py
+```
 ## Acknowledgments
 The README.md file was created based on the model: https://www.makeareadme.com/.
 
