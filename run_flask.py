@@ -8,8 +8,8 @@ from flask_restful import Api , Resource
 app=Flask(__name__)
 api = Api(app)
 urllib3.disable_warnings()
-proxie1s = {"https":"http://idalianis:idalianis@192.168.30.3:3128"}
-db = MovieDB('https://34.240.190.150/', 'TestUser', 'ZfuzpbZ8Mo4' , proxie1s)
+proxie1s = {"https":"my_proxy"}
+db = MovieDB('BaseURL', 'username', 'password' , proxie1s)
 db.get_all()
 
 class Browser_requests():
