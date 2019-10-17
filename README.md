@@ -22,7 +22,7 @@ This project implements the exposed REST API. It fully implements the CRUD(creat
 ## Secret Credentials
 DataBase credentials are not provided.
 
-## Running
+## Execution
 ```bash
 run_terminal.py
 ```
