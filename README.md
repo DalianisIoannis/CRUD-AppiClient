@@ -1,6 +1,6 @@
 # CRUD-AppiClient
 
-Let's suppose we have access to a movies database which is accessible through a REST API on a specific URL. My work proxy and my own credentials are not provided. The database holds the following data:
+Let's suppose we have access to a movies database which is accessible through a REST API on a specific URL. The database holds the following data:
 ```bash
 -Actors-
 o Name (string)
@@ -18,6 +18,8 @@ o Actors (linked to Actors endpoint)
 ```
 
 This project implements the exposed REST API. It fully implements the CRUD(create, read, update, delete) for the endpoints.
+##Secret Credentials
+DataBase credentials are not provided.
 ## Running
 ```bash
 run_terminal.py
