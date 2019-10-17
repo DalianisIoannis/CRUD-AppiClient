@@ -18,8 +18,10 @@ o Actors (linked to Actors endpoint)
 ```
 
 This project implements the exposed REST API. It fully implements the CRUD(create, read, update, delete) for the endpoints.
+
 ##Secret Credentials
 DataBase credentials are not provided.
+
 ## Running
 ```bash
 run_terminal.py
